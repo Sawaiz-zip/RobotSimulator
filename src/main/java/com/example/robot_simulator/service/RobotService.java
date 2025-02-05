@@ -20,44 +20,49 @@ public class RobotService {
     }
 
     public String startSimulation(String input) {
+        // Split input into lines
         String[] parts = input.split("\n");
         if (parts.length != 3) {
-            throw new IllegalArgumentException("Invalid input format.");
+            throw new IllegalArgumentException(
+                    "Invalid input format. Expected 3 lines: (table, robot, commands)."
+            );
         }
-
+        // Parse table size and robot initial position
         this.table = inputParserService.parseTable(parts[0]);
-        System.out.println(table.getRows() + " and " + table.getColumns() + "printing values in table");
         this.robot = inputParserService.parseRobot(parts[1]);
-        System.out.println(robot.getRow() + " and " + robot.getColumn() + " and " + robot.getPosition() + " printing values in robot");
+
+        if (table == null || robot == null) {
+            throw new IllegalStateException(
+                    "Table and Robot must be initialized before executing commands."
+            );
+        }
+        // Parse commands
         String commands = inputParserService.parseCommand(parts[2]);
-        System.out.println(commands + "printing commands");
-
         return runCommands(commands);
-
-
     }
 
     public String runCommands(String input) {
-    for (char command : input.toCharArray())
-    {
-        switch (command) {
-            case 'M' : robot.move();
-            break;
-            case 'R' : robot.rotateRight();
-            break;
-            case 'L' : robot.rotateLeft();
-            break;
-            default  : throw new InvalidCommandException("Invalid command: " + command);
+        // Process each command character in the input string
+        for (char command : input.toCharArray()) {
+            switch (command) {
+                case 'M':
+                    robot.move();
+                    break;
+                case 'R':
+                    robot.rotateRight();
+                    break;
+                case 'L':
+                    robot.rotateLeft();
+                    break;
+                default:
+                    throw new InvalidCommandException("Invalid command: " + command);
+            }
+        }
+        // Check if the robot's final position is within the table bounds
+        if (table.isValidPosition(robot.getRow(), robot.getColumn())) {
+            return robot.getPosition();
+        } else {
+            throw new InvalidPositionException("Movement out of bounds.");
         }
     }
-    System.out.println(robot.getPosition().toString() + "robot possition after running commands");
-     if(table.isValidPosition(robot.getRow(), robot.getColumn()))
-     {
-         return robot.getPosition();
-     }
-     else {
-         throw new InvalidPositionException("Invalid position.");
-     }
-    }
-
 }

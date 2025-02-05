@@ -36,12 +36,8 @@ public class Robot {
         direction = direction.rotateLeft();
     }
 
-    public Direction getDirection() {
-        return direction;
-    }
-
     public String getPosition() {
-    return row + "," + column + "," +  direction.toString();
+        return row + "," + column + "," + direction.toString();
     }
 
 }

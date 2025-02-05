@@ -8,7 +8,7 @@ public enum Direction {
     }
 
     public Direction rotateLeft() {
-        return values()[(this.ordinal() + 3) % values().length];  // Check later with -1
+        return values()[(this.ordinal() + 3) % values().length];
     }
 
 }
