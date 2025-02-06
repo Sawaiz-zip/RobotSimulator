@@ -13,20 +13,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK) // Runs only the web context (no TestRestTemplate)
-@AutoConfigureMockMvc //  Automatically configures MockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 class RobotControllerIT {
 
     @Autowired
-    private MockMvc mockMvc; // Injects MockMvc to test APIs
-
-    @Autowired
-    private RobotService robotService; // Ensures service is available
-
-    @BeforeEach
-    void setUp() {
-        // Nothing required for MockMvc setup
-    }
+    private MockMvc mockMvc;
 
     @Test
     @DisplayName("Test valid simulation request")
@@ -34,11 +26,11 @@ class RobotControllerIT {
         // Given (Valid Input)
         String input = "5 5\n1 2 S\nMRMLM";
 
-        // When & Then (MockMvc performs a POST request and expects a 200 OK response)
+        // When you send a valid input then expect a 200 OK response and final robot position
         mockMvc.perform(post("/robot/simulate")
                         .contentType(MediaType.TEXT_PLAIN)
                         .content(input))
-                .andExpect(status().isOk()) // Expect HTTP 200 OK
+                .andExpect(status().isOk())
                 .andExpect(content().string("3,1,S")); // Expect the correct robot position
     }
 
@@ -48,10 +40,10 @@ class RobotControllerIT {
         // Given (Invalid Input)
         String invalidInput = "5 5\n1 2"; // Missing command line
 
-        // When & Then (MockMvc performs a POST request and expects a 400 Bad Request response)
+        // When you send an invalid input then expect a 400 badRequest response.
         mockMvc.perform(post("/robot/simulate")
                         .contentType(MediaType.TEXT_PLAIN)
                         .content(invalidInput))
-                .andExpect(status().isBadRequest()); // Expect HTTP 400 Bad Request
+                .andExpect(status().isBadRequest());
     }
 }

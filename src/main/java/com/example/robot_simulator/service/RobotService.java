@@ -19,29 +19,24 @@ public class RobotService {
         this.inputParserService = inputParserService;
     }
 
-    public String startSimulation(String input) {
-        // Split input into lines
-        String[] parts = input.split("\n");
-        if (parts.length != 3) {
-            throw new IllegalArgumentException(
-                    "Invalid input format. Expected 3 lines: (table, robot, commands)."
-            );
-        }
+    public String startSimulation(String[] input) {
+
         // Parse table size and robot initial position
-        this.table = inputParserService.parseTable(parts[0]);
-        this.robot = inputParserService.parseRobot(parts[1]);
+        this.table = inputParserService.parseTable(input[0]);
+        this.robot = inputParserService.parseRobot(input[1]);
 
         if (table == null || robot == null) {
             throw new IllegalStateException(
                     "Table and Robot must be initialized before executing commands."
             );
         }
-        // Parse commands
-        String commands = inputParserService.parseCommand(parts[2]);
+        // Extracting commands from input
+        String commands = inputParserService.parseCommand(input[2]);
         return runCommands(commands);
     }
 
     public String runCommands(String input) {
+
         // Process each command character in the input string
         for (char command : input.toCharArray()) {
             switch (command) {

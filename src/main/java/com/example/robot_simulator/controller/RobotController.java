@@ -1,11 +1,8 @@
 package com.example.robot_simulator.controller;
-
 import com.example.robot_simulator.service.RobotService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +20,7 @@ public class RobotController {
 
     @PostMapping("/simulate")
     public ResponseEntity<Object> simulate(@RequestBody String input) {
-        return ResponseEntity.ok(robotService.startSimulation(input));
+        return ResponseEntity.ok(robotService.startSimulation(checkData(input)));
     }
 
     @PostMapping("/simulate/file")
@@ -34,11 +31,21 @@ public class RobotController {
                     .lines()
                     .collect(Collectors.joining("\n"));
 
-            return ResponseEntity.ok(robotService.startSimulation(fileContent));
+            return ResponseEntity.ok(robotService.startSimulation(checkData(fileContent)));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error reading file: " + e.getMessage());
         }
+    }
+
+    public String[] checkData(String input) {
+        String[] parts = input.split("\n");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException(
+                    "Invalid input format. Expected 3 lines: (table, robot, commands)."
+            );
+        }
+        return parts;
     }
 }
 
