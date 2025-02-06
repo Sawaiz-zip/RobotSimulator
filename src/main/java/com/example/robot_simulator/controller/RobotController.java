@@ -25,6 +25,10 @@ public class RobotController {
 
     @PostMapping("/simulate/file")
     public ResponseEntity<Object> simulateFile(@RequestParam("file") MultipartFile file) {
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("No file found");
+        }
         try {
             // Read file content as String
             String fileContent = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))
